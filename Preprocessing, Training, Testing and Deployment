@@ -1,0 +1,27 @@
+1: Xtrain
+2: X_val
+3: Y_val
+4: Ytrain
+5: X_train, X_val, Y_train, Y_val = train_test_split(Xtrain, Ytrain, stratify=Ytrain, test_size=0.2, random_state=42)
+6: # Data Transformation and Reshaping
+7: scaler = MinMaxScaler(feature_range=(0, 1))
+8: X_train = scaler.fit_transform(X_train)
+9: X_val = scaler.transform(X_val)
+10: X_test = scaler.transform(X_test)
+11: X_train = X_train.reshape((X_train.shape[0], 1, 15, 1))
+12: X_val = X_val.reshape((X_val.shape[0], 1, 15, 1))
+13: X_test = X_test.reshape((X_test.shape[0], 1, 15, 1))
+14: # Model Training
+15: model = Sequential()
+16: model.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=(1, 15, 1)))
+17: model.add(MaxPooling2D(pool_size=(2, 2)))
+18: model.add(Flatten())
+19: model.add(LSTM(64))
+20: model.add(Dense(1, activation='sigmoid'))
+21: model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+22: history = model.fit(X_train, Y_train, validation_data=(X_val, Y_val), epochs=10, batch_size=32)
+
+# Model Evaluation
+23: loss, accuracy = model.evaluate(X_test, Y_test)
+24: print("Test Loss:", loss)
+25: print("Test Accuracy:", accuracy)
